@@ -91,6 +91,38 @@
 5. 使用私有化部署版本的用户，请在 IDE 的 MCP 的配置文件添加参数："--apifox-api-base-url=`<私有化部署服务器的 API 地址，以 http:// 或 https:// 开头>`"。另外，请确保网络可以正常访问 `www.npm.com`。
 6. 除了 Apifox 项目之外，也支持直接读取 Swagger/OAS 文件，请删除 `"--project-id=<project-id>"` 参数，添加 `"--oas=<oas-url-or-path>"` 参数。如：`npx apifox-mcp-server --oas https://petstore.swagger.io/v2/swagger.json` 或 `npx apifox-mcp-server --oas ～/data/petstore/swagger.json`
 
+## 🔒 工具名固定（用于自动 Approval）
+
+一些 IDE / Agent 框架的自动 approval（白名单）是按 “tool name” 匹配的。如果你发现每次启动 MCP 后工具名会变化，可以通过指定固定前缀来让工具名稳定下来：
+
+- 方式 1：启动参数 `--tool-prefix=<prefix>`
+- 方式 2：环境变量 `APIFOX_TOOL_PREFIX=<prefix>`（或 `APIFOX_MCP_TOOL_PREFIX=<prefix>`）
+
+示例（固定前缀为 `apifox_api`）：
+
+```json
+{
+  "mcpServers": {
+    "API 文档": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "apifox-mcp-server@latest",
+        "--project-id=<project-id>",
+        "--tool-prefix=apifox_api"
+      ],
+      "env": {
+        "APIFOX_ACCESS_TOKEN": "<access-token>"
+      }
+    }
+  }
+}
+```
+
+注意：
+- `prefix` 会被自动清洗为只包含字母/数字/下划线（其它字符会替换成 `_`），以避免不同宿主对 tool name 规则不一致导致的兼容性问题。
+- 如果你用的是 `--oas` 并且 URL 带动态 query（例如带时间戳 / 签名参数），建议设置 `--tool-prefix`，这样不受 URL 变化影响。
+
 ## ❓帮助与支持
 
 Apifox MCP Server 还在内测阶段，欢迎各位给我们提建议和想法，请加内测群：

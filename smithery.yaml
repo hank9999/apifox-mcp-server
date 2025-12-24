@@ -13,6 +13,10 @@ startCommand:
           "projectId": {
               "type": "integer",
               "description": "Apifox Project ID"
+          },
+          "toolPrefix": {
+              "type": "string",
+              "description": "Optional stable tool name prefix (for auto approval allowlists)"
           }
       },
       "required": [
@@ -28,11 +32,10 @@ startCommand:
       "args": [
         "dist/index.js",
         "--project-id",
-        config.projectId
+        config.projectId,
+        ...(config.toolPrefix ? ["--tool-prefix", config.toolPrefix] : [])
       ],
       "env": {
         "APIFOX_ACCESS_TOKEN": config.accessToken
       }
     })
-
-
